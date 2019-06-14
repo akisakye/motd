@@ -18,6 +18,13 @@ LOAD15=`cat /proc/loadavg | awk {'print $3'}`
 HOGGERS=`ps -Ao user,uid,comm,pid,pcpu,pmem,tty --sort=-pcpu | head -n 6`
 WHO=$(who | awk '{print $1}' | grep -v root | sort -n | uniq -c | awk '{print $2}' | tr '\n' ','| sed 's/,$//
 ')
+upSeconds="$(/usr/bin/cut -d. -f1 /proc/uptime)"
+secs=$((${upSeconds}%60))
+mins=$((${upSeconds}/60%60))
+hours=$((${upSeconds}/3600%24))
+days=$((${upSeconds}/86400))
+UPTIME=`printf "%d days, %02dh%02dm%02ds" "$days" "$hours" "$mins" "$secs"`
+
 
 if [[ ${USER} != 'root' ]]; then
 echo "
@@ -33,6 +40,7 @@ $(tput setaf 2)
  - CPU usage...........: $LOAD1, $LOAD5, $LOAD15 (1, 5, 15 min)
  - Memory used.........: $MEMORY1 / $MEMORY2
  - Swap in use.........: `free -m | tail -n 1 | awk '{print $3}'` MB
+ - Uptime..............: ${UPTIME}
 ===============================================
  - Top 5 CPU and Mem hoggers
 
