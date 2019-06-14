@@ -16,12 +16,16 @@ LOAD1=`cat /proc/loadavg | awk {'print $1'}`
 LOAD5=`cat /proc/loadavg | awk {'print $2'}`
 LOAD15=`cat /proc/loadavg | awk {'print $3'}`
 HOGGERS=`ps -Ao user,uid,comm,pid,pcpu,pmem,tty --sort=-pcpu | head -n 6`
+WHO=$(who | awk '{print $1}' | grep -v root | sort -n | uniq -c | awk '{print $2}' | tr '\n' ','| sed 's/,$//
+')
 
+if [[ ${USER} != 'root' ]]; then
 echo "
 
 
 $(tput setaf 2)
 ===============================================
+ - Who's here..........: $WHO
  - Hostname............: $HOSTNAME
  - Disk Space..........: $ROOT remaining
  - IP Address(es)......: $IPADDR
@@ -37,3 +41,4 @@ $HOGGERS
 ===============================================
 
 $(tput sgr 0)"
+fi
